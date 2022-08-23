@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="savingsaccount")
+@Table(name="savingsAccount")
 public class SavingsAccount {
 	@Id
         private String seq_id;
