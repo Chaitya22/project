@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Table(name="savingsAccount")
 public class SavingsAccount {
 	@Id
-        private String seq_id;
+    private String seq_id;
 	private String account_no;
 	private String name;
 	private String email;
