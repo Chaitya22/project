@@ -2,7 +2,9 @@ package com.homeloan.project.service;
 
 import com.homeloan.project.http.requests.LoanRequest;
 import com.homeloan.project.model.LoanAccount;
-import com.homeloan.project.repository.LoanRepository;
+import com.homeloan.project.model.LoanApplication;
+import com.homeloan.project.repository.LoanAccountRepository;
+import com.homeloan.project.repository.LoanApplicationRepository;
 import exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,9 @@ import java.util.Optional;
 public class LoanService implements ILoanService {
 
     @Autowired
-    private LoanRepository loanRepository;
+    private LoanAccountRepository loanRepository;
+    @Autowired
+    private LoanApplicationRepository loanApplicationRepository;
 
     @Override
     public List<LoanAccount> getAllLoans() {
@@ -33,24 +37,39 @@ public class LoanService implements ILoanService {
     }
 
     @Override
-    public Boolean applyHomeLoan(LoanRequest loanRequest) {
-        double eligible_loan_amount = loanRequest.getMonthly_salary() * 50;
+    public String applyHomeLoan(LoanApplication loanApplication) {
+        double eligible_loan_amount = loanApplication.getMonthly_salary() * 50;
 
-        if(eligible_loan_amount > loanRequest.getLoan_amount()) {
+        if(eligible_loan_amount < loanApplication.getLoan_amount()) {
             log.info("Requested amount greater than eligible amount for user <userid>");
-            return false;
+            loanApplication.setStatus("Declined");
+            loanApplicationRepository.save(loanApplication);
+            return "Loan amount greater than eligible amount which is " + Double.toString(loanApplication.getMonthly_salary()*50);
         }
 
-        //Todo: Create loan account and loan repayment schedule
-        //Todo: mail the user loan details and loan repayment schedule
         loanRepository.save(LoanAccount.builder()
                         .seq_id("abc")
-                        .roi(7.0)
-                        .status("ongoing")
-                        .tenure(loanRequest.getTenure()*12)
-                        .total_loan_amount(loanRequest.getLoan_amount())
+                        .roi(7.0f)
+                        .status("Ongoing")
+                        .tenure(loanApplication.getTenure())
+                        .total_loan_amount(loanApplication.getLoan_amount())
                         .build()
         );
-        return true;
+        loanApplication.setStatus("Approved");
+        loanApplicationRepository.save(loanApplication);
+        //Todo: mail the user loan details and loan repayment schedule
+        return "Loan sanctioned. Details of the loan are mailed.";
+    }
+
+    @Override
+    public LoanApplication createApplication(LoanRequest loanRequest) {
+        return loanApplicationRepository.save(LoanApplication.builder()
+                        .address(loanRequest.getAddress())
+                        .loan_amount(loanRequest.getLoan_amount())
+                        .tenure(loanRequest.getTenure()*12)
+                        .monthly_salary(loanRequest.getMonthly_salary())
+                        .saving_account_number("abc")
+                        .build()
+        );
     }
 }

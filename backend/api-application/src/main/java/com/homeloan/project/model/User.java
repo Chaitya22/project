@@ -1,22 +1,23 @@
 package com.homeloan.project.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="user")
+@Table(name = "user")
 public class User {
 	@Id
-	private String userid;
+	private String userId;
 	private String password;
-	private String seq_id;
+
+	@OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@JoinColumn(name = "seq_id")
+	private SavingsAccount savingsAccount;
+
 }
 
