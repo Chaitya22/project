@@ -55,7 +55,7 @@ public class LoanService implements ILoanService {
         }
 
         LoanAccount savedLoan = loanRepository.save(LoanAccount.builder()
-                        .seq_id(customer.getSavingsAccount().getSeq_id())
+                        .savingsAccount(customer.getSavingsAccount())
                         .roi(7.0f)
                         .status("Ongoing")
                         .tenure(loanApplication.getTenure())

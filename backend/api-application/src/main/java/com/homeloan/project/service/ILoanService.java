@@ -8,9 +8,9 @@ import com.homeloan.project.model.LoanApplication;
 import java.util.List;
 
 public interface ILoanService {
-    public abstract List<LoanAccount> getAllLoans();
-    public abstract LoanAccount getLoanById(String loan_acc_id);
-    public abstract String applyHomeLoan(LoanApplication loanApplication, AuthUser customer);
+    List<LoanAccount> getAllLoans();
+    LoanAccount getLoanById(String loan_acc_id);
+    String applyHomeLoan(LoanApplication loanApplication, AuthUser customer);
 
-    public abstract LoanApplication createApplication(LoanRequest loanRequest, AuthUser customer);
+    LoanApplication createApplication(LoanRequest loanRequest, AuthUser customer);
 }

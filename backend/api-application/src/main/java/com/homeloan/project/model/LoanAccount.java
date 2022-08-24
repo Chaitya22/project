@@ -20,11 +20,16 @@ public class LoanAccount {
 	@GeneratedValue(generator = CustomIdGenerator.generatorName)
 	@GenericGenerator(name = CustomIdGenerator.generatorName, strategy = "com.homeloan.project.helpers.CustomIdGenerator")
 	private String loan_acc_id;
-	private int seq_id;
 	private float total_loan_amount;
 	private float roi;
 	private int tenure;
 
 	//Valid values(Approved / Ongoing / Closed).
 	private String status;
+
+	@ManyToOne(cascade = CascadeType.REMOVE)
+	@JoinColumn(name = "seq_id", unique = true)
+	private SavingsAccount savingsAccount;
+
+
 }

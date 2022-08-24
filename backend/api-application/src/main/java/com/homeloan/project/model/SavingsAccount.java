@@ -18,5 +18,5 @@ public class SavingsAccount {
 	private String account_no;
 	private String name;
 	private String email;
-	private double current_balance;
+	private float current_balance;
 }

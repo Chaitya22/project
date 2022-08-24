@@ -25,6 +25,7 @@ public class SavingsAccountController {
             return new ServiceResult<>("Error occurred while fetching all Savings account data");
 		}
 	}
+
 	
 	/**
 	 * addAccount(working::)
