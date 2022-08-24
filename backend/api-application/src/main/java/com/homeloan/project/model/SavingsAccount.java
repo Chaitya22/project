@@ -1,8 +1,6 @@
 package com.homeloan.project.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +13,8 @@ import lombok.NoArgsConstructor;
 @Table(name="savingsAccount")
 public class SavingsAccount {
 	@Id
-    private String seq_id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int seq_id;
 	private String account_no;
 	private String name;
 	private String email;

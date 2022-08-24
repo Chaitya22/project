@@ -1,6 +1,7 @@
 package com.homeloan.project.service;
 
 import com.homeloan.project.http.requests.LoanRequest;
+import com.homeloan.project.model.Customer;
 import com.homeloan.project.model.LoanAccount;
 import com.homeloan.project.model.LoanApplication;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public interface ILoanService {
     public abstract List<LoanAccount> getAllLoans();
     public abstract LoanAccount getLoanById(String loan_acc_id);
-    public abstract String applyHomeLoan(LoanApplication loanApplication);
+    public abstract String applyHomeLoan(LoanApplication loanApplication, Customer customer);
 
-    public abstract LoanApplication createApplication(LoanRequest loanRequest);
+    public abstract LoanApplication createApplication(LoanRequest loanRequest, Customer customer);
 }

@@ -1,6 +1,7 @@
 package com.homeloan.project.service;
 
 import com.homeloan.project.http.requests.LoanRequest;
+import com.homeloan.project.model.Customer;
 import com.homeloan.project.model.LoanAccount;
 import com.homeloan.project.model.LoanApplication;
 import com.homeloan.project.repository.LoanAccountRepository;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,18 +39,18 @@ public class LoanService implements ILoanService {
     }
 
     @Override
-    public String applyHomeLoan(LoanApplication loanApplication) {
+    public String applyHomeLoan(LoanApplication loanApplication, Customer customer) {
         double eligible_loan_amount = loanApplication.getMonthly_salary() * 50;
-
+        log.info("Incoming loan request from "+ customer.getUserId());
         if(eligible_loan_amount < loanApplication.getLoan_amount()) {
-            log.info("Requested amount greater than eligible amount for user <userid>");
+            log.info("Requested amount greater than eligible amount for user "+ customer.getUserId());
             loanApplication.setStatus("Declined");
             loanApplicationRepository.save(loanApplication);
             return "Loan amount greater than eligible amount which is " + Double.toString(loanApplication.getMonthly_salary()*50);
         }
 
         loanRepository.save(LoanAccount.builder()
-                        .seq_id("abc")
+                        .seq_id(customer.getSavingsAccount().getSeq_id())
                         .roi(7.0f)
                         .status("Ongoing")
                         .tenure(loanApplication.getTenure())
@@ -62,14 +64,16 @@ public class LoanService implements ILoanService {
     }
 
     @Override
-    public LoanApplication createApplication(LoanRequest loanRequest) {
+    public LoanApplication createApplication(LoanRequest loanRequest, Customer customer) {
         return loanApplicationRepository.save(LoanApplication.builder()
                         .address(loanRequest.getAddress())
                         .loan_amount(loanRequest.getLoan_amount())
                         .tenure(loanRequest.getTenure()*12)
                         .monthly_salary(loanRequest.getMonthly_salary())
-                        .saving_account_number("abc")
+                        .saving_account_number(customer.getSavingsAccount().getAccount_no())
                         .build()
         );
     }
+
+
 }

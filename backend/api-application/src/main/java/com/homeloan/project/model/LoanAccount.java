@@ -20,7 +20,7 @@ public class LoanAccount {
 	@GeneratedValue(generator = CustomIdGenerator.generatorName)
 	@GenericGenerator(name = CustomIdGenerator.generatorName, strategy = "com.homeloan.project.helpers.CustomIdGenerator")
 	private String loan_acc_id;
-	private String seq_id;
+	private int seq_id;
 	private double total_loan_amount;
 	private double roi;
 	private int tenure;
