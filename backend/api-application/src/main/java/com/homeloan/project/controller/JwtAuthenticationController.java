@@ -1,7 +1,5 @@
 package com.homeloan.project.controller;
 
-import java.util.Objects;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.homeloan.project.config.JwtTokenUtil;
-import com.homeloan.project.model.JwtRequest;
-import com.homeloan.project.model.JwtResponse;
+import com.homeloan.project.utils.JwtRequest;
+import com.homeloan.project.utils.JwtResponse;
 import com.homeloan.project.service.JwtUserDetailsService;
 
 @RestController

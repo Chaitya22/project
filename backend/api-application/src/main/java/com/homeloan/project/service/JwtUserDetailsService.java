@@ -14,9 +14,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		if ("capstone".equals(username)) {
-			return new User("capstone", "$2a$10$UvqNWHgt/Vs9MnbzV/fbD.3f2qHiSglzyeQ6txP25JH0YROMWnAJK\r\n"
-					+ "",
-					new ArrayList<>());
+			return new User("capstone", "hello",new ArrayList<>());
 		} else {
 			throw new UsernameNotFoundException("User not found with username: " + username);
 		}

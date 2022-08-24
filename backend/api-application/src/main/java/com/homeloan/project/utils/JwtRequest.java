@@ -1,4 +1,4 @@
-package com.homeloan.project.model;
+package com.homeloan.project.utils;
 
 import java.io.Serializable;
 
