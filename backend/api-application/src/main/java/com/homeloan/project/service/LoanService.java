@@ -1,11 +1,11 @@
 package com.homeloan.project.service;
 
 import com.homeloan.project.http.requests.LoanRequest;
-import com.homeloan.project.model.Customer;
-import com.homeloan.project.model.LoanAccount;
-import com.homeloan.project.model.LoanApplication;
+import com.homeloan.project.model.*;
 import com.homeloan.project.repository.LoanAccountRepository;
 import com.homeloan.project.repository.LoanApplicationRepository;
+import com.homeloan.project.repository.RepaymentRepository;
+import com.homeloan.project.utils.EmiManager;
 import exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,11 @@ public class LoanService implements ILoanService {
     private LoanAccountRepository loanRepository;
     @Autowired
     private LoanApplicationRepository loanApplicationRepository;
+    @Autowired
+    private RepaymentRepository repaymentRepository;
+
+    @Autowired
+    private EmiManager emiManager;
 
     @Override
     public List<LoanAccount> getAllLoans() {
@@ -39,7 +44,7 @@ public class LoanService implements ILoanService {
     }
 
     @Override
-    public String applyHomeLoan(LoanApplication loanApplication, Customer customer) {
+    public String applyHomeLoan(LoanApplication loanApplication, AuthUser customer) {
         double eligible_loan_amount = loanApplication.getMonthly_salary() * 50;
         log.info("Incoming loan request from "+ customer.getUserId());
         if(eligible_loan_amount < loanApplication.getLoan_amount()) {
@@ -49,7 +54,7 @@ public class LoanService implements ILoanService {
             return "Loan amount greater than eligible amount which is " + Double.toString(loanApplication.getMonthly_salary()*50);
         }
 
-        loanRepository.save(LoanAccount.builder()
+        LoanAccount savedLoan = loanRepository.save(LoanAccount.builder()
                         .seq_id(customer.getSavingsAccount().getSeq_id())
                         .roi(7.0f)
                         .status("Ongoing")
@@ -59,12 +64,13 @@ public class LoanService implements ILoanService {
         );
         loanApplication.setStatus("Approved");
         loanApplicationRepository.save(loanApplication);
+        createRepaymentEmi(savedLoan);
         //Todo: mail the user loan details and loan repayment schedule
         return "Loan sanctioned. Details of the loan are mailed.";
     }
 
     @Override
-    public LoanApplication createApplication(LoanRequest loanRequest, Customer customer) {
+    public LoanApplication createApplication(LoanRequest loanRequest, AuthUser customer) {
         return loanApplicationRepository.save(LoanApplication.builder()
                         .address(loanRequest.getAddress())
                         .loan_amount(loanRequest.getLoan_amount())
@@ -75,5 +81,28 @@ public class LoanService implements ILoanService {
         );
     }
 
+    private void createRepaymentEmi(LoanAccount loanAccount) {
 
+        float amt = loanAccount.getTotal_loan_amount();
+        int tenure = loanAccount.getTenure();
+        float emi = emiManager.CalculateEmi(amt, tenure);
+        LocalDate date = LocalDate.now().plusMonths(1);
+        float rate = EmiManager.INTEREST;
+        for (int i = 0; i < tenure; i++) {
+            float interest = (float) (amt * rate);
+            float principal = emi - interest;
+            Repayment rp = new Repayment();
+            rp.setEmi(emi);
+            rp.setInterestAmount(interest);
+            rp.setPrincipalAmount(principal);
+            rp.setOutstanding(amt);
+            rp.setDate(date);
+            rp.setStatus("Pending");
+            rp.setLoanAccount(loanAccount);
+            repaymentRepository.save(rp);
+            amt = amt - principal;
+            date = date.plusMonths(1);
+
+        }
+    }
 }

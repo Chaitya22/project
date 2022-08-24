@@ -21,8 +21,8 @@ public class LoanAccount {
 	@GenericGenerator(name = CustomIdGenerator.generatorName, strategy = "com.homeloan.project.helpers.CustomIdGenerator")
 	private String loan_acc_id;
 	private int seq_id;
-	private double total_loan_amount;
-	private double roi;
+	private float total_loan_amount;
+	private float roi;
 	private int tenure;
 
 	//Valid values(Approved / Ongoing / Closed).

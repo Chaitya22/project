@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoanRequest {
     private String address;
-    public double loan_amount;
+    public float loan_amount;
     public int tenure;
-    public double monthly_salary;
+    public float monthly_salary;
 }

@@ -2,6 +2,7 @@ package com.homeloan.project.http.controller;
 
 import com.homeloan.project.http.ServiceResult;
 import com.homeloan.project.http.requests.LoanRequest;
+import com.homeloan.project.model.AuthUser;
 import com.homeloan.project.model.Customer;
 import com.homeloan.project.model.LoanApplication;
 import com.homeloan.project.service.ILoanService;
@@ -35,7 +36,7 @@ public class LoanController {
 	
 	@PostMapping("apply")
 	public ServiceResult<String> applyHomeLoan(@RequestBody LoanRequest loanRequest, Authentication authentication) {
-		Customer customer = (Customer) authentication.getPrincipal();
+		AuthUser customer = (AuthUser) authentication.getPrincipal();
 		LoanApplication loanApplication = loanService.createApplication(loanRequest, customer);
 		String result = loanService.applyHomeLoan(loanApplication,customer);
 		return new ServiceResult<>(result);
