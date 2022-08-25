@@ -1,6 +1,7 @@
 package com.homeloan.project.service;
 
 import com.homeloan.project.http.requests.LoanRequest;
+import com.homeloan.project.mailSender.EmailSenderService;
 import com.homeloan.project.model.*;
 import com.homeloan.project.repository.LoanAccountRepository;
 import com.homeloan.project.repository.LoanApplicationRepository;
@@ -28,6 +29,8 @@ public class LoanService implements ILoanService {
 
     @Autowired
     private EmiManager emiManager;
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Override
     public List<LoanAccount> getAllLoans() {
@@ -51,6 +54,12 @@ public class LoanService implements ILoanService {
             log.info("Requested amount greater than eligible amount for user "+ customer.getUserId());
             loanApplication.setStatus("Declined");
             loanApplicationRepository.save(loanApplication);
+            String body = "Dear Account Holder, \n\t We regret to inform you that your application for a home loan of ₹ "+ loanApplication.getLoan_amount()+" has not been approved by the bank."
+                    + "\n The cause for rejection of your loan is that your requested loan amount is higher than 50 times your monthly policy. Please update the loan value and apply again."
+                    + "\nThank you.\n"
+                    + "\nRegards,"
+                    + "\n Bank";
+            emailSenderService.sendSimpleEmail(customer.getSavingsAccount().getEmail(),body,"Loan approval");
             return "Loan amount greater than eligible amount which is " + Double.toString(loanApplication.getMonthly_salary()*50);
         }
 
@@ -62,10 +71,15 @@ public class LoanService implements ILoanService {
                         .total_loan_amount(loanApplication.getLoan_amount())
                         .build()
         );
+        String body = "Dear Account Holder, \n\t We are highly pleased to inform you that your application for a home loan of ₹ "+ savedLoan.getTotal_loan_amount() +" has been approved by the bank."
+                + "\n Your loan account id is :" + savedLoan.getLoan_acc_id() + ". Please save it for future reference."
+                + "\nThank you.\n"
+                + "\nRegards,"
+                + "\n Bank";
         loanApplication.setStatus("Approved");
         loanApplicationRepository.save(loanApplication);
         createRepaymentEmi(savedLoan);
-        //Todo: mail the user loan details and loan repayment schedule
+        emailSenderService.sendSimpleEmail(customer.getSavingsAccount().getEmail(),body,"Loan approval");
         return "Loan sanctioned. Details of the loan are mailed.";
     }
 

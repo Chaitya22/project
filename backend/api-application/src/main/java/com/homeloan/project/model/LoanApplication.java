@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Table(name="loanApplication")
 public class LoanApplication {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
     private String address;
     public float loan_amount;

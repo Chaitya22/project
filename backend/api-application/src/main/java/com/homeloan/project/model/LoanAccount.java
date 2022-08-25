@@ -28,7 +28,7 @@ public class LoanAccount {
 	private String status;
 
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "seq_id", unique = true)
+	@JoinColumn(name = "seq_id")
 	private SavingsAccount savingsAccount;
 
 
